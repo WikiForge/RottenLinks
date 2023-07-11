@@ -7,7 +7,7 @@
 	],
 	"descriptionmsg": "rottenlinks-desc",
 	"license-name": "GPL-3.0-or-later",
-	"url": "https://github.com/miraheze/RottenLinks",
+	"url": "https://github.com/WikiForge/RottenLinks",
 	"type": "specialpage",
 	"requires": {
 		"MediaWiki": ">= 1.35.3"
