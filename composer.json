@@ -1,5 +1,5 @@
 {
-	"name": "miraheze/rotten-links",
+	"name": "wikiforge/rotten-links",
 	"type": "mediawiki-extension",
 	"description": "A MediaWiki extension to show the state of all external links on the wiki.",
 	"homepage": "https://www.mediawiki.org/wiki/Extension:RottenLinks",
@@ -13,7 +13,7 @@
 		}
 	],
 	"support": {
-		"issues": "https://phabricator.miraheze.org/tag/rottenlinks/",
+		"issues": "https://support.wikiforge.net/tag/rottenlinks/",
 		"wiki": "https://www.mediawiki.org/wiki/Extension:RottenLinks"
 	},
 	"require": {
