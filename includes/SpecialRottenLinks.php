@@ -107,7 +107,10 @@ class SpecialRottenLinks extends SpecialPage {
 			'runDate' => [
 				'type' => 'info',
 				'label-message' => 'rottenlinks-rundate',
-				'default' => $this->getContext()->getLanguage()->timeanddate( $cache->get( $cache->makeKey( 'RottenLinks', 'lastRun' ) ), true ),
+				'default' => $this->getContext()->getLanguage()->timeanddate(
+					$cache->get( $cache->makeKey( 'RottenLinks', 'lastRun' ) ),
+					true
+				),
 				'section' => 'metadata'
 			]
 		];
@@ -126,7 +129,8 @@ class SpecialRottenLinks extends SpecialPage {
 
 			$statDescriptor[$respCode] = [
 				'type' => 'info',
-				'label' => "HTTP: {$respCode} " . ( $respCode != 0 ? HttpStatus::getMessage( $respCode ) : 'No Response' ),
+				'label' => "HTTP: {$respCode} " .
+					( $respCode != 0 ? HttpStatus::getMessage( $respCode ) : 'No Response' ),
 				'default' => $count,
 				'section' => 'statistics'
 			];
