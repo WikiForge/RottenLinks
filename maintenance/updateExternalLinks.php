@@ -51,6 +51,8 @@ class UpdateExternalLinks extends Maintenance {
 			$rottenlinksarray[$row->el_to_domain_index . $row->el_to_path][] = (int)$row->el_from;
 		}
 
+		$exclude = (array)$config->get( 'RottenLinksExcludeProtocols' );
+
 		foreach ( $rottenlinksarray as $url => $pages ) {
 			$url = $this->decodeDomainName( $url );
 
@@ -60,13 +62,13 @@ class UpdateExternalLinks extends Maintenance {
 
 			$urlexp = explode( ':', $url );
 
-			if ( isset( $urlexp[0] ) && in_array( strtolower( $urlexp[0] ), (array)$config->get( 'RottenLinksExcludeProtocols' ) ) ) {
+			if ( isset( $urlexp[0] ) && in_array( strtolower( $urlexp[0] ), $exclude ) ) {
 				continue;
 			}
 
 			$mainSite = explode( '/', $urlexp[1] );
 
-			if ( isset( $mainSite[2] ) && in_array( $mainSite[2], (array)$config->get( 'RottenLinksExcludeWebsites' ) ) ) {
+			if ( isset( $mainSite[2] ) && in_array( $mainSite[2], $exclude ) ) {
 				continue;
 			}
 
