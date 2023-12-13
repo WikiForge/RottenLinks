@@ -4,7 +4,6 @@ namespace WikiForge\RottenLinks;
 
 use HTMLForm;
 use HttpStatus;
-use IContextSource;
 use ObjectCache;
 use SpecialPage;
 use Wikimedia\Rdbms\ILoadBalancer;
@@ -67,7 +66,7 @@ class SpecialRottenLinks extends SpecialPage {
 		$this->getOutput()->addParserOutputContent( $pager->getFullOutput() );
 	}
 
-	public static function showStatistics( IContextSource $context ) {
+	private function showStatistics() {
 		$dbr = $this->dbLoadBalancer->getMaintenanceConnectionRef( DB_REPLICA );
 
 		$statusNumbers = $dbr->select(
@@ -90,7 +89,7 @@ class SpecialRottenLinks extends SpecialPage {
 			'runDate' => [
 				'type' => 'info',
 				'label-message' => 'rottenlinks-rundate',
-				'default' => $context->getLanguage()->timeanddate( $cache->get( $cache->makeKey( 'RottenLinks', 'lastRun' ) ), true ),
+				'default' => $this->getContext()->getLanguage()->timeanddate( $cache->get( $cache->makeKey( 'RottenLinks', 'lastRun' ) ), true ),
 				'section' => 'metadata'
 			]
 		];
