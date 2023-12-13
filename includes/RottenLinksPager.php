@@ -5,9 +5,9 @@ namespace WikiForge\RottenLinks;
 use Config;
 use Html;
 use HttpStatus;
+use IContextSource;
 use Linker;
 use LinkFilter;
-use MediaWiki\MediaWikiServices;
 use SpecialPage;
 use TablePager;
 
@@ -19,12 +19,27 @@ class RottenLinksPager extends TablePager {
 	/** @var bool */
 	private $showBad;
 
-	public function __construct( $page, $showBad ) {
-		parent::__construct( $page->getContext() );
+	/**
+	 * @param IContextSource $context The context source.
+	 * @param Config $config RottenLinks config factory instance.
+	 * @param bool $showBad Whether to show only links with bad status.
+	 */
+	public function __construct(
+		IContextSource $context,
+		Config $config,
+		bool $showBad
+	) {
+		parent::__construct( $context );
+
 		$this->showBad = $showBad;
-		$this->config = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'RottenLinks' );
+		$this->config = $config;
 	}
 
+	/**
+	 * Get the field names for the table header.
+	 *
+	 * @return array Field names and their corresponding messages.
+	 */
 	public function getFieldNames() {
 		static $headers = null;
 
@@ -41,6 +56,14 @@ class RottenLinksPager extends TablePager {
 		return $headers;
 	}
 
+	/**
+	 * Format the values for each field in the table.
+	 *
+	 * @param string $name Field name.
+	 * @param mixed $value Field value.
+	 *
+	 * @return string Formatted HTML for the field.
+	 */
 	public function formatValue( $name, $value ) {
 		$row = $this->mCurrentRow;
 
@@ -80,6 +103,11 @@ class RottenLinksPager extends TablePager {
 		return $formatted;
 	}
 
+	/**
+	 * Get the query information for the pager.
+	 *
+	 * @return array Query information.
+	 */
 	public function getQueryInfo() {
 		$info = [
 			'tables' => [ 'rottenlinks' ],
@@ -95,10 +123,22 @@ class RottenLinksPager extends TablePager {
 		return $info;
 	}
 
+	/**
+	 * Get the default sorting field for the table.
+	 *
+	 * @return string Default sorting field.
+	 */
 	public function getDefaultSort() {
 		return 'rl_externallink';
 	}
 
+	/**
+	 * Check if a field is sortable.
+	 *
+	 * @param string $name Field name.
+	 *
+	 * @return bool True if the field is sortable, false otherwise.
+	 */
 	public function isFieldSortable( $name ) {
 		return $name !== 'rl_pageusage';
 	}
