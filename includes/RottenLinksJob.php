@@ -120,7 +120,7 @@ class RottenLinksJob extends Job implements GenericParameterJob {
 	 *
 	 * @return string The URL with the decoded domain name.
 	 */
-	private function decodeDomainName( string $url ) {
+	private function decodeDomainName( string $url ): string {
 		$urlexp = explode( '://', $url, 2 );
 		if ( count( $urlexp ) === 2 ) {
 			$locexp = explode( '/', $urlexp[1], 2 );
