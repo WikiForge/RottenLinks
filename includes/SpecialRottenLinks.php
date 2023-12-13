@@ -1,10 +1,26 @@
 <?php
 
-use MediaWiki\MediaWikiServices;
+namespace WikiForge\RottenLinks;
+
+use HTMLForm;
+use HttpStatus;
+use IContextSource;
+use ObjectCache;
+use SpecialPage;
+use Wikimedia\Rdbms\ILoadBalancer;
 
 class SpecialRottenLinks extends SpecialPage {
-	public function __construct() {
+
+	/** @var ILoadBalancer */
+	private $dbLoadBalancer;
+
+	/**
+	 * @param ILoadBalancer $dbLoadBalancer
+	 */
+	public function __construct( ILoadBalancer $dbLoadBalancer ) {
 		parent::__construct( 'RottenLinks' );
+
+		$this->dbLoadBalancer = $dbLoadBalancer;
 	}
 
 	public function execute( $par ) {
@@ -52,9 +68,7 @@ class SpecialRottenLinks extends SpecialPage {
 	}
 
 	public static function showStatistics( IContextSource $context ) {
-		$dbr = MediaWikiServices::getInstance()
-			->getDBLoadBalancer()
-			->getMaintenanceConnectionRef( DB_REPLICA );
+		$dbr = $this->dbLoadBalancer->getMaintenanceConnectionRef( DB_REPLICA );
 
 		$statusNumbers = $dbr->select(
 			'rottenlinks',
