@@ -32,6 +32,7 @@
 		"RottenLinks": {
 			"class": "WikiForge\\RottenLinks\\SpecialRottenLinks",
 			"services": [
+				"ConfigFactory",
 				"DBLoadBalancer"
 			]
 		}
