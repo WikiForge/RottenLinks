@@ -1,5 +1,9 @@
 <?php
 
+namespace WikiForge\RottenLinks;
+
+use GenericParameterJob;
+use Job;
 use MediaWiki\MediaWikiServices;
 
 class RottenLinksJob extends Job implements GenericParameterJob {
@@ -18,7 +22,7 @@ class RottenLinksJob extends Job implements GenericParameterJob {
 	}
 
 	public function run() {
-		$config = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'rottenlinks' );
+		$config = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'RottenLinks' );
 
 		if ( $this->addedExternalLinks ) {
 			$dbw = MediaWikiServices::getInstance()
