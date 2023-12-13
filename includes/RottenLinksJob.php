@@ -38,8 +38,10 @@ class RottenLinksJob extends Job implements GenericParameterJob {
 				->getDBLoadBalancer()
 				->getMaintenanceConnectionRef( DB_PRIMARY );
 
-			foreach ( $this->addedExternalLinks as $url ) {
+			$excludeProtocols = (array)$config->get( 'RottenLinksExcludeProtocols' );
+			$excludeWebsites = (array)$config->get( 'RottenLinksExcludeWebsites' );
 
+			foreach ( $this->addedExternalLinks as $url ) {
 				$url = $this->decodeDomainName( $url );
 
 				if ( substr( $url, 0, 2 ) === '//' ) {
@@ -48,17 +50,25 @@ class RottenLinksJob extends Job implements GenericParameterJob {
 
 				$urlexp = explode( ':', $url );
 
-				if ( isset( $urlexp[0] ) && in_array( strtolower( $urlexp[0] ), (array)$config->get( 'RottenLinksExcludeProtocols' ) ) ) {
+				if ( isset( $urlexp[0] ) && in_array( strtolower( $urlexp[0] ), $excludeProtocols ) ) {
 					continue;
 				}
 
 				$mainSite = explode( '/', $urlexp[1] );
 
-				if ( isset( $mainSite[2] ) && in_array( $mainSite[2], (array)$config->get( 'RottenLinksExcludeWebsites' ) ) ) {
+				if ( isset( $mainSite[2] ) && in_array( $mainSite[2], $excludeWebsites ) ) {
 					continue;
 				}
 
-				$rottenLinksCount = $dbw->selectRowCount( 'rottenlinks', 'rl_externallink', [ 'rl_externallink' => $url ], __METHOD__ );
+				$rottenLinksCount = $dbw->selectRowCount(
+					'rottenlinks',
+					'rl_externallink',
+					[
+						'rl_externallink' => $url
+					],
+					__METHOD__
+				);
+
 				if ( $rottenLinksCount > 0 ) {
 					// Don't create duplicate entires
 					continue;
