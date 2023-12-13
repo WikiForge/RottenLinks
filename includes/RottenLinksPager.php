@@ -53,8 +53,8 @@ class RottenLinksPager extends TablePager {
 				$respCode = (int)$row->rl_respcode;
 				$colour = ( in_array( $respCode, $this->config->get( 'RottenLinksBadCodes' ) ) ) ? "#8B0000" : "#008000";
 				$formatted = ( $respCode != 0 )
-					? HTML::element( 'font', [ 'color' => $colour ], HttpStatus::getMessage( $respCode ) ?? "HTTP: {$respCode}" )
-					: HTML::element( 'font', [ 'color' => '#8B0000' ], 'No Response' );
+					? Html::element( 'font', [ 'color' => $colour ], HttpStatus::getMessage( $respCode ) ?? "HTTP: {$respCode}" )
+					: Html::element( 'font', [ 'color' => '#8B0000' ], 'No Response' );
 				break;
 			case 'rl_pageusage':
 				$el = LinkFilter::makeIndexes( $row->rl_externallink );
@@ -70,10 +70,10 @@ class RottenLinksPager extends TablePager {
 
 				$specialLinkSearch = SpecialPage::getTitleFor( 'LinkSearch' );
 				$href = $specialLinkSearch->getInternalURL( [ 'target' => $row->rl_externallink ] );
-				$formatted = HTML::element( 'a', [ 'href' => $href ], (string)$pagesCount );
+				$formatted = Html::element( 'a', [ 'href' => $href ], (string)$pagesCount );
 				break;
 			default:
-				$formatted = HTML::element( 'span', [], "Unable to format $name" );
+				$formatted = Html::element( 'span', [], "Unable to format $name" );
 				break;
 		}
 
