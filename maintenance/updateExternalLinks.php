@@ -98,10 +98,11 @@ class UpdateExternalLinks extends Maintenance {
 	 * before storing it in the DB. This breaks non-ASCII domains.
 	 * URL-decoding the domain part turns these URLs back into valid syntax.
 	 *
-	 * @param string $url
-	 * @return string
+	 * @param string $url The URL to decode.
+	 *
+	 * @return string The URL with the decoded domain name.
 	 */
-	private function decodeDomainName( string $url ) {
+	private function decodeDomainName( string $url ): string {
 		$urlexp = explode( '://', $url, 2 );
 		if ( count( $urlexp ) === 2 ) {
 			$locexp = explode( '/', $urlexp[1], 2 );
