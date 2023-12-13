@@ -11,16 +11,14 @@ class Installer implements LoadExtensionSchemaUpdatesHook {
 	 * @param DatabaseUpdater $updater
 	 */
 	public function onLoadExtensionSchemaUpdates( $updater ) {
-		$updater->addExtensionTable( 'rottenlinks',
-			__DIR__ . '/../sql/rottenlinks.sql' );
+		$dir = __DIR__ . '/../../sql';
 
-		$updater->addExtensionField( 'rottenlinks', 'rl_id',
-			__DIR__ . '/../sql/patches/patch-add-rl_id.sql' );
+		$updater->addExtensionTable( 'rottenlinks', "$dir/rottenlinks.sql" );
 
-		$updater->addExtensionIndex( 'rottenlinks', 'rl_externallink',
-			__DIR__ . '/../sql/patches/20210215.sql' );
+		$updater->addExtensionField( 'rottenlinks', 'rl_id', "$dir/patches/patch-add-rl_id.sql" );
 
-		$updater->dropExtensionField( 'rottenlinks', 'rl_pageusage',
-			__DIR__ . '/../sql/patches/patch-drop-rl_pageusage.sql' );
+		$updater->addExtensionIndex( 'rottenlinks', 'rl_externallink', "$dir/patches/20210215.sql" );
+
+		$updater->dropExtensionField( 'rottenlinks', 'rl_pageusage', "$dir/patches/patch-drop-rl_pageusage.sql" );
 	}
 }
