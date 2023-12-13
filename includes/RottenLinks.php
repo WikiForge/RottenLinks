@@ -1,12 +1,14 @@
 <?php
 
+namespace WikiForge\RottenLinks;
+
 use MediaWiki\MediaWikiServices;
 
 class RottenLinks {
 	public static function getResponse( $url ) {
 		$services = MediaWikiServices::getInstance();
 
-		$config = $services->getConfigFactory()->makeConfig( 'rottenlinks' );
+		$config = $services->getConfigFactory()->makeConfig( 'RottenLinks' );
 
 		// Make the protocol lowercase
 		$urlexp = explode( '://', $url, 2 );
@@ -27,7 +29,7 @@ class RottenLinks {
 		$httpProxy = $config->get( 'RottenLinksHTTPProxy' );
 
 		$userAgent = $config->get( 'RottenLinksUserAgent' ) ?:
-			'RottenLinks, MediaWiki extension (https://github.com/miraheze/RottenLinks), running on ' . $config->get( 'Server' );
+			'RottenLinks, MediaWiki extension (https://github.com/WikiForge/RottenLinks), running on ' . $config->get( 'Server' );
 
 		$request = $services->getHttpRequestFactory()->createMultiClient( [ 'proxy' => $httpProxy ] )
 			->run( [
