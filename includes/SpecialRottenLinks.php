@@ -2,6 +2,8 @@
 
 namespace WikiForge\RottenLinks;
 
+use Config;
+use ConfigFactory;
 use HTMLForm;
 use HttpStatus;
 use ObjectCache;
@@ -10,18 +12,29 @@ use Wikimedia\Rdbms\ILoadBalancer;
 
 class SpecialRottenLinks extends SpecialPage {
 
+	/** @var Config */
+	private $config;
+
 	/** @var ILoadBalancer */
 	private $dbLoadBalancer;
 
 	/**
+	 * @param ConfigFactory $configFactory
 	 * @param ILoadBalancer $dbLoadBalancer
 	 */
-	public function __construct( ILoadBalancer $dbLoadBalancer ) {
+	public function __construct(
+		ConfigFactory $configFactory,
+		ILoadBalancer $dbLoadBalancer
+	) {
 		parent::__construct( 'RottenLinks' );
 
+		$this->config = $configFactory->makeConfig( 'RottenLinks' );
 		$this->dbLoadBalancer = $dbLoadBalancer;
 	}
 
+	/**
+	 * @param string $par
+	 */
 	public function execute( $par ) {
 		$this->setHeaders();
 		$this->outputHeader();
@@ -30,7 +43,7 @@ class SpecialRottenLinks extends SpecialPage {
 		$showBad = $this->getRequest()->getBool( 'showBad' );
 		$stats = $this->getRequest()->getBool( 'stats' );
 
-		$pager = new RottenLinksPager( $this, $showBad );
+		$pager = new RottenLinksPager( $this->getContext, $this->config, $showBad );
 
 		$formDescriptor = [
 			'showBad' => [
@@ -66,6 +79,11 @@ class SpecialRottenLinks extends SpecialPage {
 		$this->getOutput()->addParserOutputContent( $pager->getFullOutput() );
 	}
 
+	/**
+	 * Display statistics related to RottenLinks.
+	 *
+	 * @return array Array with statistics information.
+	 */
 	private function showStatistics() {
 		$dbr = $this->dbLoadBalancer->getMaintenanceConnectionRef( DB_REPLICA );
 
@@ -117,6 +135,11 @@ class SpecialRottenLinks extends SpecialPage {
 		return $statDescriptor;
 	}
 
+	/**
+	 * Get the group name for the special page.
+	 *
+	 * @return string Group name.
+	 */
 	protected function getGroupName() {
 		return 'maintenance';
 	}
