@@ -1,8 +1,18 @@
 <?php
 
+namespace WikiForge\RottenLinks;
+
+use Config;
+use Html;
+use HttpStatus;
+use Linker;
+use LinkFilter;
 use MediaWiki\MediaWikiServices;
+use SpecialPage;
+use TablePager;
 
 class RottenLinksPager extends TablePager {
+
 	/** @var Config */
 	private $config;
 
@@ -12,7 +22,7 @@ class RottenLinksPager extends TablePager {
 	public function __construct( $page, $showBad ) {
 		parent::__construct( $page->getContext() );
 		$this->showBad = $showBad;
-		$this->config = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'rottenlinks' );
+		$this->config = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'RottenLinks' );
 	}
 
 	public function getFieldNames() {
@@ -54,7 +64,8 @@ class RottenLinksPager extends TablePager {
 					[
 						'el_to_domain_index' => substr( $el[0][0], 0, 255 ),
 						'el_to_path' => $el[0][1]
-					]
+					],
+					__METHOD__
 				);
 
 				$specialLinkSearch = SpecialPage::getTitleFor( 'LinkSearch' );
