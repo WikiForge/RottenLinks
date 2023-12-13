@@ -9,7 +9,6 @@ use WikiForge\RottenLinks\RottenLinksJob;
 
 class Main implements LinksUpdateCompleteHook {
 
-
 	/** @var JobQueueGroup */
 	private $jobQueueGroup;
 
