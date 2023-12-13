@@ -4,6 +4,7 @@ namespace WikiForge\RottenLinks;
 
 use GenericParameterJob;
 use Job;
+use LinkFilter;
 use MediaWiki\MediaWikiServices;
 
 class RottenLinksJob extends Job implements GenericParameterJob {
