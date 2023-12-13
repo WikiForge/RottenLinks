@@ -43,7 +43,7 @@ class SpecialRottenLinks extends SpecialPage {
 		$showBad = $this->getRequest()->getBool( 'showBad' );
 		$stats = $this->getRequest()->getBool( 'stats' );
 
-		$pager = new RottenLinksPager( $this->getContext, $this->config, $showBad );
+		$pager = new RottenLinksPager( $this->getContext(), $this->config, $showBad );
 
 		$formDescriptor = [
 			'showBad' => [
@@ -71,7 +71,7 @@ class SpecialRottenLinks extends SpecialPage {
 		$htmlForm->setMethod( 'get' )->prepareForm()->displayForm( false );
 
 		if ( $stats ) {
-			$statForm = HTMLForm::factory( 'ooui', $this->showStatistics( $this->getContext() ), $this->getContext(), 'rottenlinks' );
+			$statForm = HTMLForm::factory( 'ooui', $this->showStatistics(), $this->getContext(), 'rottenlinks' );
 			$statForm->setMethod( 'get' )->suppressDefaultSubmit()->prepareForm()->displayForm( false );
 			return;
 		}
