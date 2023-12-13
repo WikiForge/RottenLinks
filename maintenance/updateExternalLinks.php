@@ -1,8 +1,18 @@
 <?php
 
-use MediaWiki\MediaWikiServices;
+namespace WikiForge\RottenLinks\Maintenance;
 
-require_once __DIR__ . '/../../../maintenance/Maintenance.php';
+use Maintenance;
+use MediaWiki\MediaWikiServices;
+use ObjectCache;
+use WikiForge\RottenLinks\RottenLinks;
+
+$IP = getenv( 'MW_INSTALL_PATH' );
+if ( $IP === false ) {
+	$IP = __DIR__ . '/../../..';
+}
+
+require_once "$IP/maintenance/Maintenance.php";
 
 class UpdateExternalLinks extends Maintenance {
 	public function __construct() {
@@ -14,7 +24,7 @@ class UpdateExternalLinks extends Maintenance {
 	public function execute() {
 		$time = time();
 
-		$config = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'rottenlinks' );
+		$config = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'RottenLinks' );
 		$dbw = $this->getDB( DB_PRIMARY );
 
 		$this->output( "Dropping all existing recorded entries\n" );
@@ -87,8 +97,11 @@ class UpdateExternalLinks extends Maintenance {
 	 * Apparently, MediaWiki URL-encodes the whole URL, including the domain name,
 	 * before storing it in the DB. This breaks non-ASCII domains.
 	 * URL-decoding the domain part turns these URLs back into valid syntax.
+	 *
+	 * @param string $url
+	 * @return string
 	 */
-	private function decodeDomainName( $url ) {
+	private function decodeDomainName( string $url ) {
 		$urlexp = explode( '://', $url, 2 );
 		if ( count( $urlexp ) === 2 ) {
 			$locexp = explode( '/', $urlexp[1], 2 );
