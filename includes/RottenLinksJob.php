@@ -15,6 +15,9 @@ class RottenLinksJob extends Job implements GenericParameterJob {
 	/** @var array */
 	private $removedExternalLinks;
 
+	/**
+	 * @param array $params Job parameters.
+	 */
 	public function __construct( array $params ) {
 		parent::__construct( 'RottenLinksJob', $params );
 
@@ -22,6 +25,11 @@ class RottenLinksJob extends Job implements GenericParameterJob {
 		$this->removedExternalLinks = $params['removedExternalLinks'] ?? [];
 	}
 
+	/**
+	 * Execute the job, updating the 'rottenlinks' table based on added and removed external links.
+	 *
+	 * @return bool True on success.
+	 */
 	public function run() {
 		$config = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'RottenLinks' );
 
@@ -107,8 +115,12 @@ class RottenLinksJob extends Job implements GenericParameterJob {
 	 * Apparently, MediaWiki URL-encodes the whole URL, including the domain name,
 	 * before storing it in the DB. This breaks non-ASCII domains.
 	 * URL-decoding the domain part turns these URLs back into valid syntax.
+	 *
+	 * @param string $url The URL to decode.
+	 *
+	 * @return string The URL with the decoded domain name.
 	 */
-	private function decodeDomainName( $url ) {
+	private function decodeDomainName( string $url ) {
 		$urlexp = explode( '://', $url, 2 );
 		if ( count( $urlexp ) === 2 ) {
 			$locexp = explode( '/', $urlexp[1], 2 );
