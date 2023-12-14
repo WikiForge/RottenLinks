@@ -86,27 +86,23 @@ class SpecialRottenLinks extends SpecialPage {
 	private function showStatistics() {
 		$dbr = $this->dbLoadBalancer->getMaintenanceConnectionRef( DB_REPLICA );
 
-		$statusNumbers = $dbr->select(
-			'rottenlinks',
-			'rl_respcode',
-			[],
-			__METHOD__,
-			'DISTINCT'
-		);
+		$statusNumbers = $dbr->newSelectQueryBuilder()
+			->select( 'rl_respcode' )
+			->distinct()
+			->from( 'rottenlinks' )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		$statDescriptor = [];
 
 		foreach ( $statusNumbers as $num ) {
 			$respCode = $num->rl_respcode;
-
-			$count = (string)$dbr->selectRowCount(
-				'rottenlinks',
-				'rl_respcode',
-				[
-					'rl_respcode' => $respCode
-				],
-				__METHOD__
-			);
+			$count = (string)$dbr->newSelectQueryBuilder()
+				->select( 'rl_respcode' )
+				->from( 'rottenlinks' )
+				->where( [ 'rl_respcode' => $respCode ] )
+				->caller( __METHOD__ )
+				->fetchRowCount();
 
 			$statDescriptor[$respCode] = [
 				'type' => 'info',
