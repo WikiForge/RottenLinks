@@ -60,14 +60,12 @@ class RottenLinksJob extends Job implements GenericParameterJob {
 					continue;
 				}
 
-				$rottenLinksCount = $dbw->selectRowCount(
-					'rottenlinks',
-					'rl_externallink',
-					[
-						'rl_externallink' => $url
-					],
-					__METHOD__
-				);
+				$rottenLinksCount = $dbw->newSelectQueryBuilder()
+					->select( 'rl_externallink' )
+					->from( 'externallinks' )
+					->where( [ 'rl_externallink' => $url ] )
+					->caller( __METHOD__ )
+					->fetchRowCount();
 
 				if ( $rottenLinksCount > 0 ) {
 					// Don't create duplicate entires
@@ -99,15 +97,15 @@ class RottenLinksJob extends Job implements GenericParameterJob {
 				}
 
 				$el = LinkFilter::makeIndexes( $url );
-				$externalLinksCount = $dbw->selectRowCount(
-					'externallinks',
-					'*',
-					[
+				$externalLinksCount = $dbw->newSelectQueryBuilder()
+					->select( '*' )
+					->from( 'externallinks' )
+					->where( [
 						'el_to_domain_index' => substr( $el[0][0], 0, 255 ),
 						'el_to_path' => $el[0][1]
-					],
-					__METHOD__
-				);
+					] )
+					->caller( __METHOD__ )
+					->fetchRowCount();
 
 				if ( $externalLinksCount > 0 ) {
 					// Don't delete if the link exists on other pages.
