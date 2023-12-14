@@ -2,18 +2,16 @@
 	"@metadata": {
 		"authors": [
 			"John Lewis",
-			"Kghbln"
+			"Kghbln",
+			"Universal Omega"
 		]
 	},
 	"rottenlinks": "Status of external links",
 	"rottenlinks-desc": "Shows the [[Special:RottenLinks|state of all external links]] on the wiki",
 	"rottenlinks-extensionname": "RottenLinks",
-	"rottenlinks-metadata": "Script Data",
 	"rottenlinks-table-external": "External Link",
 	"rottenlinks-table-response": "HTTP Response",
 	"rottenlinks-table-usage": "Page Usage",
-	"rottenlinks-rundate": "Script run date",
-	"rottenlinks-runtime": "Script execution time",
 	"rottenlinks-showbad": "Show rotten links only",
 	"rottenlinks-statistics": "Rotten Link Statistics",
 	"rottenlinks-stats": "Show link statistics"
