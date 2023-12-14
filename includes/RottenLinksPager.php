@@ -92,15 +92,15 @@ class RottenLinksPager extends TablePager {
 				break;
 			case 'rl_pageusage':
 				$el = LinkFilter::makeIndexes( $row->rl_externallink );
-				$pagesCount = $db->selectRowCount(
-					'externallinks',
-					'*',
-					[
+				$pagesCount = $db->newSelectQueryBuilder()
+					->select( '*' )
+					->from( 'externallinks' )
+					->where( [
 						'el_to_domain_index' => substr( $el[0][0], 0, 255 ),
 						'el_to_path' => $el[0][1]
-					],
-					__METHOD__
-				);
+					] )
+					->caller( __METHOD__ )
+					->fetchRowCount();
 
 				$specialLinkSearch = SpecialPage::getTitleFor( 'LinkSearch' );
 				$href = $specialLinkSearch->getInternalURL( [ 'target' => $row->rl_externallink ] );
