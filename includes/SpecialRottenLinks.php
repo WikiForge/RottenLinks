@@ -6,7 +6,6 @@ use Config;
 use ConfigFactory;
 use HTMLForm;
 use HttpStatus;
-use ObjectCache;
 use SpecialPage;
 use Wikimedia\Rdbms\ILoadBalancer;
 
@@ -95,25 +94,7 @@ class SpecialRottenLinks extends SpecialPage {
 			'DISTINCT'
 		);
 
-		$cache = ObjectCache::getLocalClusterInstance();
-
-		$statDescriptor = [
-			'runTime' => [
-				'type' => 'info',
-				'label-message' => 'rottenlinks-runtime',
-				'default' => $cache->get( $cache->makeKey( 'RottenLinks', 'runTime' ) ) . ' seconds',
-				'section' => 'metadata'
-			],
-			'runDate' => [
-				'type' => 'info',
-				'label-message' => 'rottenlinks-rundate',
-				'default' => $this->getContext()->getLanguage()->timeanddate(
-					$cache->get( $cache->makeKey( 'RottenLinks', 'lastRun' ) ),
-					true
-				),
-				'section' => 'metadata'
-			]
-		];
+		$statDescriptor = [];
 
 		foreach ( $statusNumbers as $num ) {
 			$respCode = $num->rl_respcode;
