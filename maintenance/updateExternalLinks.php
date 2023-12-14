@@ -34,16 +34,15 @@ class UpdateExternalLinks extends Maintenance {
 			__METHOD__
 		);
 
-		$res = $dbw->select(
-			'externallinks',
-			[
+		$res = $dbw->newSelectQueryBuilder()
+			->select( [
 				'el_from',
 				'el_to_domain_index',
-				'el_to_path'
-			],
-			[],
-			__METHOD__
-		);
+				'el_to_path',
+			] )
+			->from( 'externallinks' )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		$rottenlinksarray = [];
 
