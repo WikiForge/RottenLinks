@@ -1,8 +1,18 @@
 <?php
 
-use MediaWiki\MediaWikiServices;
+namespace WikiForge\RottenLinks\Maintenance;
 
-require_once __DIR__ . '/../../../maintenance/Maintenance.php';
+use Maintenance;
+use MediaWiki\MediaWikiServices;
+use ObjectCache;
+use WikiForge\RottenLinks\RottenLinks;
+
+$IP = getenv( 'MW_INSTALL_PATH' );
+if ( $IP === false ) {
+	$IP = __DIR__ . '/../../..';
+}
+
+require_once "$IP/maintenance/Maintenance.php";
 
 class UpdateExternalLinks extends Maintenance {
 	public function __construct() {
@@ -14,7 +24,7 @@ class UpdateExternalLinks extends Maintenance {
 	public function execute() {
 		$time = time();
 
-		$config = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'rottenlinks' );
+		$config = MediaWikiServices::getInstance()->getConfigFactory()->makeConfig( 'RottenLinks' );
 		$dbw = $this->getDB( DB_PRIMARY );
 
 		$this->output( "Dropping all existing recorded entries\n" );
@@ -24,19 +34,24 @@ class UpdateExternalLinks extends Maintenance {
 			__METHOD__
 		);
 
-		$res = $dbw->select(
-			'externallinks',
-			[
+		$res = $dbw->newSelectQueryBuilder()
+			->select( [
 				'el_from',
-				'el_to'
-			]
-		);
+				'el_to_domain_index',
+				'el_to_path',
+			] )
+			->from( 'externallinks' )
+			->caller( __METHOD__ )
+			->fetchResultSet();
 
 		$rottenlinksarray = [];
 
 		foreach ( $res as $row ) {
-			$rottenlinksarray[$row->el_to][] = (int)$row->el_from;
+			$rottenlinksarray[$row->el_to_domain_index . $row->el_to_path][] = (int)$row->el_from;
 		}
+
+		$excludeProtocols = (array)$config->get( 'RottenLinksExcludeProtocols' );
+		$excludeWebsites = (array)$config->get( 'RottenLinksExcludeWebsites' );
 
 		foreach ( $rottenlinksarray as $url => $pages ) {
 			$url = $this->decodeDomainName( $url );
@@ -47,13 +62,13 @@ class UpdateExternalLinks extends Maintenance {
 
 			$urlexp = explode( ':', $url );
 
-			if ( isset( $urlexp[0] ) && in_array( strtolower( $urlexp[0] ), (array)$config->get( 'RottenLinksExcludeProtocols' ) ) ) {
+			if ( isset( $urlexp[0] ) && in_array( strtolower( $urlexp[0] ), $excludeProtocols ) ) {
 				continue;
 			}
 
 			$mainSite = explode( '/', $urlexp[1] );
 
-			if ( isset( $mainSite[2] ) && in_array( $mainSite[2], (array)$config->get( 'RottenLinksExcludeWebsites' ) ) ) {
+			if ( isset( $mainSite[2] ) && in_array( $mainSite[2], $excludeWebsites ) ) {
 				continue;
 			}
 
@@ -63,8 +78,7 @@ class UpdateExternalLinks extends Maintenance {
 			$dbw->insert( 'rottenlinks',
 				[
 					'rl_externallink' => $url,
-					'rl_respcode' => $resp,
-					'rl_pageusage' => json_encode( $pages )
+					'rl_respcode' => $resp
 				],
 				__METHOD__
 			);
@@ -85,8 +99,12 @@ class UpdateExternalLinks extends Maintenance {
 	 * Apparently, MediaWiki URL-encodes the whole URL, including the domain name,
 	 * before storing it in the DB. This breaks non-ASCII domains.
 	 * URL-decoding the domain part turns these URLs back into valid syntax.
+	 *
+	 * @param string $url The URL to decode.
+	 *
+	 * @return string The URL with the decoded domain name.
 	 */
-	private function decodeDomainName( $url ) {
+	private function decodeDomainName( string $url ): string {
 		$urlexp = explode( '://', $url, 2 );
 		if ( count( $urlexp ) === 2 ) {
 			$locexp = explode( '/', $urlexp[1], 2 );

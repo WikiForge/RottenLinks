@@ -1,5 +1,20 @@
 ## ChangeLog for RottenLinks
 
+### 2.0.0 (15-12-2023)
+* Redesign RottenLinks to not depend on a maintenance script
+* Changes how we count page usage on RottenLinks special page. We directly gather this from externallinks table rather then storing it separately.
+* Removes script statistics from statistics on Special:RottenLinks, since we don't depend on a script anymore.
+* Requires MediaWiki 1.40 or higher and to have migrated externallinks using migrateExternallinks maintenance script and to set `$wgExternalLinksSchemaMigrationStage` to `SCHEMA_COMPAT_WRITE_BOTH | SCHEMA_COMPAT_READ_NEW` or `SCHEMA_COMPAT_WRITE_NEW | SCHEMA_COMPAT_READ_NEW`.
+* Add support for MediaWiki 1.41.
+* Fix some deprecated warnings in php 8.2.
+* Modernize extension:
+  * Use class namespacing
+  * Use dependency injection
+  * Use HookHandlers
+  * Convert DB select queries to use SelectQueryBuilder
+  * Cleanup and improve qqq.json
+  * Enable and fix remaining PHPCS checks
+
 ### 1.0.20 (10-01-2023)
 * SpecialRottenLinks: replace usage of deprecated wfGetDB()
 
