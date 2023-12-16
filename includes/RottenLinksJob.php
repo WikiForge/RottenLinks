@@ -68,7 +68,7 @@ class RottenLinksJob extends Job implements GenericParameterJob {
 					->fetchRowCount();
 
 				if ( $rottenLinksCount > 0 ) {
-					// Don't create duplicate entires
+					// Don't create duplicate entries
 					continue;
 				}
 
