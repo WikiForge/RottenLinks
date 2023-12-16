@@ -4,7 +4,6 @@ namespace WikiForge\RottenLinks\Maintenance;
 
 use Maintenance;
 use MediaWiki\MediaWikiServices;
-use ObjectCache;
 use WikiForge\RottenLinks\RottenLinks;
 
 $IP = getenv( 'MW_INSTALL_PATH' );
@@ -19,6 +18,8 @@ class UpdateExternalLinks extends Maintenance {
 		parent::__construct();
 
 		$this->addDescription( 'Updates rottenlinks database table based on externallinks table.' );
+
+		$this->requireExtension( 'RottenLinks' );
 	}
 
 	public function execute() {
@@ -72,6 +73,18 @@ class UpdateExternalLinks extends Maintenance {
 				continue;
 			}
 
+			$rottenLinksCount = $dbw->newSelectQueryBuilder()
+				->select( 'rl_externallink' )
+				->from( 'externallinks' )
+				->where( [ 'rl_externallink' => $url ] )
+				->caller( __METHOD__ )
+				->fetchRowCount();
+
+			if ( $rottenLinksCount > 0 ) {
+				// Don't create duplicate entries
+				continue;
+			}
+
 			$resp = RottenLinks::getResponse( $url );
 			$pagecount = count( $pages );
 
@@ -87,10 +100,6 @@ class UpdateExternalLinks extends Maintenance {
 		}
 
 		$time = time() - $time;
-
-		$cache = ObjectCache::getLocalClusterInstance();
-		$cache->set( $cache->makeKey( 'RottenLinks', 'lastRun' ), $dbw->timestamp() );
-		$cache->set( $cache->makeKey( 'RottenLinks', 'runTime' ), $time );
 
 		$this->output( "Script took {$time} seconds.\n" );
 	}
