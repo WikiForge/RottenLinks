@@ -1,6 +1,6 @@
 ## ChangeLog for RottenLinks
 
-### 2.0.1 (17-12-2023)
+### 2.0.1 (16-12-2023)
 * Add `requireExtension` to updateExternalLinks.
 * Remove unnecessary object cache from being added in updateExternalLinks.
 * Prevent duplicate entries from being added to rottenlinks table in updateExternalLinks.
