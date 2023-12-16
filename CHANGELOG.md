@@ -1,5 +1,10 @@
 ## ChangeLog for RottenLinks
 
+### 2.0.1 (17-12-2023)
+* Add `requireExtension` to updateExternalLinks
+* Prevent duplicate entries from being added to rottenlinks table in updateExternalLinks
+* Fix table name used in RottenLinksJob
+
 ### 2.0.0 (15-12-2023)
 * Redesign RottenLinks to not depend on a maintenance script
 * Changes how we count page usage on RottenLinks special page. We directly gather this from externallinks table rather then storing it separately.
