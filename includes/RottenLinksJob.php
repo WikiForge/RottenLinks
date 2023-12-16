@@ -62,7 +62,7 @@ class RottenLinksJob extends Job implements GenericParameterJob {
 
 				$rottenLinksCount = $dbw->newSelectQueryBuilder()
 					->select( 'rl_externallink' )
-					->from( 'externallinks' )
+					->from( 'rottenlinks' )
 					->where( [ 'rl_externallink' => $url ] )
 					->caller( __METHOD__ )
 					->fetchRowCount();
